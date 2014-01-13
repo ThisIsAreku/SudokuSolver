@@ -1,0 +1,62 @@
+/*
+* main.cpp
+*
+* Copyright 2013 Alexandre Boucey <alexandre.boucey@alumni.univ-avignon.fr>
+*
+* This file is part of Sudoku.
+*
+* Sudoku is free software: you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation, either version 3 of the License, or
+* (at your option) any later version.
+*
+* Sudoku is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with Sudoku.  If not, see <http://www.gnu.org/licenses/>.
+*
+*
+*/
+
+#include <iostream>
+#include <ctime>
+
+#include "SudokuSolver.h"
+#include "BasicSudokuSolver.h"
+#include "AdvancedSudokuSolver.h"
+#include "UberSudokuSolver.h"
+
+
+using namespace std;
+
+
+
+int main(int argc, char *argv[])
+{
+    UberSudokuSolver solver;
+
+    string grille("");
+    if(argc == 2)
+        grille = argv[1];
+
+    if(!solver.litGrille(grille))
+    {
+        cerr << "Erreur de lecture de la grille" << endl;
+        return 1;
+    }
+    solver.affiche();
+
+    clock_t tStart = clock();
+    bool success = solver.solve();
+    cout << "Temps: " << (double)(clock() - tStart) / CLOCKS_PER_SEC << "s" << endl;
+    cout << "Tentatives: " << solver.getTries() << endl;
+    cout << "Grille ";
+    if(!success)
+        cout << "in";
+    cout << "valide" << endl;
+    solver.affiche();
+
+}
