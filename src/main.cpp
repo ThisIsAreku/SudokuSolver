@@ -23,6 +23,7 @@
 
 #include <iostream>
 #include <ctime>
+#include <cstdlib>
 
 #include "SudokuSolver.h"
 #include "BasicSudokuSolver.h"
@@ -33,30 +34,44 @@
 using namespace std;
 
 
+void testWithSolver(SudokuSolver *solver, string grille){
+
+    if(!solver->litGrille(grille))
+    {
+        cerr << "Erreur de lecture de la grille" << endl;
+        exit(1);
+    }
+    cout << "Grille: " << endl;
+    solver->affiche();
+
+    clock_t tStart = clock();
+    bool success = solver->solve();
+    cout << "Temps: " << (double)(clock() - tStart) / CLOCKS_PER_SEC << "s" << endl;
+    cout << "Tentatives: " << solver->getTries() << endl;
+    cout << "Grille ";
+    if(!success)
+        cout << "in";
+    cout << "valide" << endl;
+    solver->affiche();
+}
+
 
 int main(int argc, char *argv[])
 {
-    UberSudokuSolver solver;
 
     string grille("");
     if(argc == 2)
         grille = argv[1];
 
-    if(!solver.litGrille(grille))
-    {
-        cerr << "Erreur de lecture de la grille" << endl;
-        return 1;
-    }
-    solver.affiche();
+    cout << "Fichier grille: " << grille << endl;
 
-    clock_t tStart = clock();
-    bool success = solver.solve();
-    cout << "Temps: " << (double)(clock() - tStart) / CLOCKS_PER_SEC << "s" << endl;
-    cout << "Tentatives: " << solver.getTries() << endl;
-    cout << "Grille ";
-    if(!success)
-        cout << "in";
-    cout << "valide" << endl;
-    solver.affiche();
+    AdvancedSudokuSolver asolver;
+    cout << endl << "Test avec AdvancedSudokuSolver"
+         << endl << "==============================" << endl << endl;
+    testWithSolver(&asolver, grille);
 
+    UberSudokuSolver usolver;
+    cout << endl << "Test avec UberSudokuSolver"
+         << endl << "==========================" << endl << endl;
+    testWithSolver(&usolver, grille);
 }

@@ -106,8 +106,8 @@ bool AdvancedSudokuSolver::est_valide(int &x, int &y)
             }
             if(m[x][i] == m[x][j])
             {
-               /* cout << "LIGNE FAIL" << endl;
-                cout << "m[" << x << "][" << i << "] == m[" << x << "]["<< j <<"] : " << m[x][i] << " == " << m[x][j] << endl;*/
+                /* cout << "LIGNE FAIL" << endl;
+                 cout << "m[" << x << "][" << i << "] == m[" << x << "]["<< j <<"] : " << m[x][i] << " == " << m[x][j] << endl;*/
                 return false;
             }
         }
@@ -141,7 +141,7 @@ bool AdvancedSudokuSolver::est_valide(int &x, int &y)
             }
         }
     }
-   // cout << "OK" << endl << endl;
+    // cout << "OK" << endl << endl;
     return true;
 
 }

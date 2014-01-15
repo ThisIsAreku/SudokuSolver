@@ -30,10 +30,10 @@ class UberSudokuSolver : public SudokuSolver
 {
 private:
     long tries;
+    int empty;
     bool ** *contraintes;
     void fill_contraintes();
     void fastplace();
-    int findFastplace(int &, int &);
     bool checkSolution();
 public:
     UberSudokuSolver();

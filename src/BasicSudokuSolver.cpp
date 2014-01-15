@@ -42,7 +42,10 @@ BasicSudokuSolver::~BasicSudokuSolver()
 bool BasicSudokuSolver::solve()
 {
     tries = 0;
-    return backtrack();
+    cout << "Cette implémentation ne peut pas fonctionner" << endl;
+    cout << "Tester toutes les solution \"à l'aveugle\" n'est pas possible" << endl;
+    return false;
+    //return backtrack();
 }
 
 int BasicSudokuSolver::getTries()

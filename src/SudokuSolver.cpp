@@ -91,8 +91,9 @@ void SudokuSolver::importGrille(int **g)
     cloneTo(g, m);
 }
 
-int ** SudokuSolver::getGrille(){
-	return m;
+int **SudokuSolver::getGrille()
+{
+    return m;
 }
 
 void SudokuSolver::cloneTo(int **src, int **dst)

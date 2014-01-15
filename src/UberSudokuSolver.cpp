@@ -66,12 +66,17 @@ bool UberSudokuSolver::solve()
     fill_contraintes();
     fastplace();
 
-    cout << endl << "end guess" << endl;
+    //cout << endl << "Fin du fastplace (" << tries << " placés, " << empty << " restants)" << endl << endl;
 
-    SudokuSolver::affiche();
+    //SudokuSolver::affiche();
 
-    cout << "Now, backtracking..." << endl;
-    cout << "after " << tries << " guess" << endl;
+    if(empty == 0)
+    {
+        //cout << "Grille complété par fastplace (" << tries << ")" << endl;
+        return SudokuSolver::checkSolution(); // vérification de la solution
+    }
+
+    //cout << "Maintenant, Backtracking !" << endl;
 
     AdvancedSudokuSolver backtracking;
     backtracking.importGrille(m);
@@ -92,6 +97,7 @@ int UberSudokuSolver::getTries()
 
 void UberSudokuSolver::fill_contraintes()
 {
+    empty = 0;
     for (int x = 0; x < 9; ++x)
     {
         for (int y = 0; y < 9; ++y)
@@ -115,6 +121,10 @@ void UberSudokuSolver::fill_contraintes()
                         contraintes[gxp][gyp][v] = false;
                     }
                 }
+            }
+            else
+            {
+                empty++;
             }
         }
     }
@@ -140,7 +150,10 @@ void UberSudokuSolver::fill_contraintes()
 void UberSudokuSolver::fastplace()
 {
     int p;
-    bool one_edit = false;
+    bool one_edit;
+    int rule_b_indexes_l[9], rule_b_counters_l[9];
+    int rule_b_indexes_c[9], rule_b_counters_c[9];
+    bool rule_b_done_l, rule_b_done_c;
     do
     {
         one_edit = false;
@@ -150,7 +163,20 @@ void UberSudokuSolver::fastplace()
             {
                 if(m[i][j] == 0)
                 {
-                    p = findFastplace(i, j);
+                    for (int k = 0; k < 9; ++k)
+                    {
+                        if(!contraintes[i][j][k])
+                            continue;
+                        if(p == 0)
+                        {
+                            p = k + 1;
+                        }
+                        else
+                        {
+                            p = 0;
+                            break;
+                        }
+                    }
                     if(p != 0)
                     {
                         m[i][j] = p;
@@ -160,21 +186,50 @@ void UberSudokuSolver::fastplace()
                     }
                 }
             }
+            for (int x = 0; x < 9; ++x)
+            {
+                rule_b_counters_l[x] = 0;
+                rule_b_indexes_l[x] = 0;
+                rule_b_counters_c[x] = 0;
+                rule_b_indexes_c[x] = 0;
+            }
+            for (int j = 0; j < 9; ++j)
+            {
+                for (int k = 0; k < 9; ++k)
+                {
+                    if(contraintes[i][j][k] && m[i][j] == 0)
+                    {
+                        rule_b_counters_l[k]++;
+                        rule_b_indexes_l[k] = j;
+                    }
+                    if(contraintes[j][i][k] && m[j][i] == 0)
+                    {
+                        rule_b_counters_c[k]++;
+                        rule_b_indexes_c[k] = j;
+                    }
+                }
+            }
+            rule_b_done_l = rule_b_done_c = false;
+            for (int x = 0; x < 9 && (!(rule_b_done_l && rule_b_done_c)); ++x)
+            {
+                if(rule_b_counters_l[x] == 1 && !rule_b_done_l)
+                {
+                    m[i][rule_b_indexes_l[x]] = x + 1;
+                    fill_contraintes();
+                    one_edit = true;
+                    rule_b_done_l = true;
+                    tries++;
+                }
+                if(rule_b_counters_c[x] == 1 && !rule_b_done_c)
+                {
+                    m[rule_b_indexes_c[x]][i] = x + 1;
+                    fill_contraintes();
+                    one_edit = true;
+                    rule_b_done_c = true;
+                    tries++;
+                }
+            }
         }
     }
     while(one_edit);
-}
-int UberSudokuSolver::findFastplace(int &i, int &j)
-{
-    int possibility = 0;
-    for (int k = 0; k < 9; ++k)
-    {
-        if(!contraintes[i][j][k])
-            continue;
-        if(possibility == 0)
-            possibility = k + 1;
-        else
-            return 0;
-    }
-    return possibility;
 }

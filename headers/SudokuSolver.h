@@ -37,7 +37,7 @@ public:
     void affiche(int **);
     bool litGrille(std::string);
     void importGrille(int **);
-    int ** getGrille();
+    int **getGrille();
     virtual bool solve() = 0;
     virtual int getTries() = 0;
 };
