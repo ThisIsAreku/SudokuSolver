@@ -146,6 +146,27 @@ void UberSudokuSolver::fill_contraintes()
             }
         }*/
 }
+void UberSudokuSolver::update_contraintes(int &x, int &y)
+{
+    empty--;
+    int v = m[x][y] - 1;
+    for (int k = 0; k < 9; ++k)
+    {
+        contraintes[x][k][v] = false;
+        contraintes[k][y][v] = false;
+    }
+    int gx = x / 3;
+    int gy = y / 3;
+    int gxv = gx * 3;
+    int gyv = gy * 3;
+    for (int gxp = gxv; gxp < gxv + 3; ++gxp)
+    {
+        for (int gyp = gyv; gyp < gyv + 3; ++gyp)
+        {
+            contraintes[gxp][gyp][v] = false;
+        }
+    }
+}
 
 void UberSudokuSolver::fastplace()
 {
@@ -180,7 +201,8 @@ void UberSudokuSolver::fastplace()
                     if(p != 0)
                     {
                         m[i][j] = p;
-                        fill_contraintes();
+                        update_contraintes(i, j);
+                        //fill_contraintes();
                         one_edit = true;
                         tries++;
                     }
@@ -215,7 +237,8 @@ void UberSudokuSolver::fastplace()
                 if(rule_b_counters_l[x] == 1 && !rule_b_done_l)
                 {
                     m[i][rule_b_indexes_l[x]] = x + 1;
-                    fill_contraintes();
+                    update_contraintes(i, rule_b_indexes_l[x]);
+                    //fill_contraintes();
                     one_edit = true;
                     rule_b_done_l = true;
                     tries++;
@@ -223,7 +246,8 @@ void UberSudokuSolver::fastplace()
                 if(rule_b_counters_c[x] == 1 && !rule_b_done_c)
                 {
                     m[rule_b_indexes_c[x]][i] = x + 1;
-                    fill_contraintes();
+                    update_contraintes(rule_b_indexes_l[x], i);
+                    //fill_contraintes();
                     one_edit = true;
                     rule_b_done_c = true;
                     tries++;

@@ -33,6 +33,7 @@ private:
     int empty;
     bool ** *contraintes;
     void fill_contraintes();
+    void update_contraintes(int &, int &);
     void fastplace();
     bool checkSolution();
 public:
