@@ -55,49 +55,29 @@ bool AdvancedSudokuSolver::backtrack(int p)
 
     int i = p / 9;
     int j = p % 9;
-    if(m[i][j] == 0)
+    if(m[i][j] != 0)
+        return backtrack(p + 1);
+
+    for(int k = 1; k < 10; ++k)
     {
-        for(int k = 1; k < 10; ++k)
+        if(valeur_valide(k, i, j))
         {
             m[i][j] = k;
-            if(est_valide(i, j))
-            {
-                if(backtrack(p + 1))
-                {
-                    return true;
-                }
-            }
+            if(backtrack(p + 1))
+                return true;
         }
-        m[i][j] = 0;
-        return false;
     }
-    return backtrack(p + 1);
+    m[i][j] = 0;
+    return false;
 }
 
-bool AdvancedSudokuSolver::est_valide(int &x, int &y)
+bool AdvancedSudokuSolver::valeur_valide(int &v, int &x, int &y)
 {
     tries++;
     for(int i = 0; i < 9; ++i)
     {
-        for(int j = 0; j < 9; ++j)
-        {
-            if(i == j)
-                continue;
-            if(m[x][i] + m[x][j] == 0 || m[i][y] + m[j][y] == 0)
-                continue;
-            if(m[i][y] == m[j][y]) // si mm colonne
-            {
-                /*cout << "COL FAIL" << endl;
-                cout << "m[" << i << "][" << y << "] == m[" << j << "]["<< y <<"] : " << m[i][y] << " == " << m[j][y] << endl;*/
-                return false;
-            }
-            if(m[x][i] == m[x][j]) // si mm ligne
-            {
-                /* cout << "LIGNE FAIL" << endl;
-                 cout << "m[" << x << "][" << i << "] == m[" << x << "]["<< j <<"] : " << m[x][i] << " == " << m[x][j] << endl;*/
-                return false;
-            }
-        }
+        if(m[x][i] == v || m[i][y] == v)
+            return false;
     }
 
     int gx = x / 3;
@@ -111,21 +91,8 @@ bool AdvancedSudokuSolver::est_valide(int &x, int &y)
     {
         for(int j = gyv; j < gyv + 3; ++j)
         {
-            for(int i2 = gxv; i2 < gxv + 3; ++i2)
-            {
-                for(int j2 = gyv; j2 < gyv + 3; ++j2)
-                {
-                    if(i == i2 && j == j2)
-                        continue;
-                    if(m[i][j] + m[i2][j2] == 0)
-                        continue;
-                    if(m[i][j] == m[i2][j2])
-                    {
-                        //cout << "GROUPE FAIL" << endl;
-                        return false;
-                    }
-                }
-            }
+            if(m[i][j] == v)
+                return false;
         }
     }
     // cout << "OK" << endl << endl;
