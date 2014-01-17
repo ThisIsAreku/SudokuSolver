@@ -75,7 +75,6 @@ bool UberSudokuSolver::solve()
         //cout << "Grille complété par fastplace (" << tries << ")" << endl;
         return SudokuSolver::checkSolution(); // vérification de la solution
     }
-    cout << empty << endl;
 
     //cout << "Maintenant, Backtracking !" << endl;
 
