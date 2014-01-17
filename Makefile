@@ -1,6 +1,6 @@
 # Makefile
 # Copyright 2013 Alexandre Boucey <alexandre.boucey@alumni.univ-avignon.fr>
-CXXFLAGS+=-W -Wall -Wextra -pedantic -std=c++1y -O3
+CXXFLAGS+=-W -Wall -Wextra -pedantic -std=c++0x -O3
 LDFLAGS=
 EXEC=Sudoku
 HEADERS_DIR=headers
@@ -29,6 +29,7 @@ obj/%.o: src/%.cpp
 
 init:
 	@echo "Using ${CXX}"
+	${CXX} --version
 	mkdir -p obj bin
 
 .PHONY: clean mrproper
