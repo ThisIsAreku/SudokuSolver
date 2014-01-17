@@ -35,6 +35,9 @@ private:
     void fill_contraintes();
     void update_contraintes(int &, int &);
     void fastplace();
+    bool findRuleA(int &);
+    bool findRuleB(int &, bool);
+    bool findRuleBGroup();
     bool checkSolution();
 public:
     UberSudokuSolver();

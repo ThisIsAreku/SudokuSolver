@@ -75,6 +75,7 @@ bool UberSudokuSolver::solve()
         //cout << "Grille complété par fastplace (" << tries << ")" << endl;
         return SudokuSolver::checkSolution(); // vérification de la solution
     }
+    cout << empty << endl;
 
     //cout << "Maintenant, Backtracking !" << endl;
 
@@ -170,90 +171,145 @@ void UberSudokuSolver::update_contraintes(int &x, int &y)
 
 void UberSudokuSolver::fastplace()
 {
-    int p;
     bool one_edit;
-    int rule_b_indexes_l[9], rule_b_counters_l[9];
-    int rule_b_indexes_c[9], rule_b_counters_c[9];
-    bool rule_b_done_l, rule_b_done_c;
+
     do
     {
         one_edit = false;
         for (int i = 0; i < 9; ++i)
         {
-            for (int j = 0; j < 9; ++j)
+            one_edit |= findRuleA(i);
+            one_edit |= findRuleB(i, false);
+            one_edit |= findRuleB(i, true);
+        }
+        // add a lot of tries with few success..
+        //one_edit |= findRuleBGroup();
+
+    }
+    while(one_edit);
+}
+bool UberSudokuSolver::findRuleA(int &i)
+{
+    int rule_a(0);
+    for (int j = 0; j < 9; ++j)
+    {
+        if(m[i][j] == 0)
+        {
+            for (int k = 0; k < 9; ++k)
             {
-                if(m[i][j] == 0)
+                if(!contraintes[i][j][k])
+                    continue;
+                if(rule_a == 0)
                 {
+                    rule_a = k + 1;
+                }
+                else
+                {
+                    rule_a = 0;
+                    break;
+                }
+            }
+            if(rule_a != 0)
+            {
+                m[i][j] = rule_a;
+                update_contraintes(i, j);
+                return true;
+                tries++;
+            }
+        }
+    }
+    return false;
+}
+
+bool UberSudokuSolver::findRuleB(int &i, bool reversed)
+{
+    int indexes[9], counters[9];
+    for (int x = 0; x < 9; ++x)
+    {
+        counters[x] = 0;
+        indexes[x] = 0;
+    }
+    for (int j = 0; j < 9; ++j)
+    {
+        for (int k = 0; k < 9; ++k)
+        {
+            if(!reversed && contraintes[i][j][k] && m[i][j] == 0)
+            {
+                counters[k]++;
+                indexes[k] = j;
+            }
+            else if(reversed && contraintes[j][i][k] && m[j][i] == 0)
+            {
+                counters[k]++;
+                indexes[k] = j;
+            }
+        }
+    }
+    for (int x = 0; x < 9; ++x)
+    {
+        if(counters[x] == 1)
+        {
+            if(!reversed)
+            {
+                m[i][indexes[x]] = x + 1;
+                update_contraintes(i, indexes[x]);
+            }
+            else
+            {
+                m[indexes[x]][i] = x + 1;
+                update_contraintes(indexes[x], i);
+            }
+            tries++;
+            return true;
+        }
+    }
+    return false;
+}
+
+bool UberSudokuSolver::findRuleBGroup()
+{
+    int indexes_i[9], indexes_j[9], counters[9];
+    for(int gxv = 0; gxv < 9; gxv += 3)
+    {
+        for(int gyv = 0; gyv < 9; gyv += 3)
+        {
+            cout << "v: " << gxv << ", " << gyv << endl;
+            for (int x = 0; x < 9; ++x)
+            {
+                counters[x] = 0;
+                indexes_i[x] = 0;
+                indexes_j[x] = 0;
+            }
+            for (int i = gxv; i < gxv + 3; ++i)
+            {
+                for (int j = gyv; j < gyv + 3; ++j)
+                {
+                    if(m[i][j] != 0)
+                        continue;
                     for (int k = 0; k < 9; ++k)
                     {
-                        if(!contraintes[i][j][k])
-                            continue;
-                        if(p == 0)
+                        if(contraintes[i][j])
                         {
-                            p = k + 1;
+                            counters[k]++;
+                            indexes_j[k] = j;
+                            indexes_i[k] = i;
                         }
-                        else
-                        {
-                            p = 0;
-                            break;
-                        }
-                    }
-                    if(p != 0)
-                    {
-                        m[i][j] = p;
-                        update_contraintes(i, j);
-                        //fill_contraintes();
-                        one_edit = true;
-                        tries++;
                     }
                 }
             }
             for (int x = 0; x < 9; ++x)
             {
-                rule_b_counters_l[x] = 0;
-                rule_b_indexes_l[x] = 0;
-                rule_b_counters_c[x] = 0;
-                rule_b_indexes_c[x] = 0;
-            }
-            for (int j = 0; j < 9; ++j)
-            {
-                for (int k = 0; k < 9; ++k)
+                if(counters[x] == 1)
                 {
-                    if(contraintes[i][j][k] && m[i][j] == 0)
-                    {
-                        rule_b_counters_l[k]++;
-                        rule_b_indexes_l[k] = j;
-                    }
-                    if(contraintes[j][i][k] && m[j][i] == 0)
-                    {
-                        rule_b_counters_c[k]++;
-                        rule_b_indexes_c[k] = j;
-                    }
-                }
-            }
-            rule_b_done_l = rule_b_done_c = false;
-            for (int x = 0; x < 9 && (!(rule_b_done_l && rule_b_done_c)); ++x)
-            {
-                if(rule_b_counters_l[x] == 1 && !rule_b_done_l)
-                {
-                    m[i][rule_b_indexes_l[x]] = x + 1;
-                    update_contraintes(i, rule_b_indexes_l[x]);
-                    //fill_contraintes();
-                    one_edit = true;
-                    rule_b_done_l = true;
+                    cout << indexes_i[x] << ", " << indexes_j[x] << endl;
+                    cout << x << endl;
+                    m[indexes_i[x]][indexes_j[x]] = x + 1;
+                    update_contraintes(indexes_i[x], indexes_j[x]);
                     tries++;
-                }
-                if(rule_b_counters_c[x] == 1 && !rule_b_done_c)
-                {
-                    m[rule_b_indexes_c[x]][i] = x + 1;
-                    update_contraintes(rule_b_indexes_l[x], i);
-                    //fill_contraintes();
-                    one_edit = true;
-                    rule_b_done_c = true;
-                    tries++;
+                    return true;
                 }
             }
         }
     }
-    while(one_edit);
+    return false;
 }
