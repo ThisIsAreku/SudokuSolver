@@ -62,7 +62,7 @@ bool AdvancedSudokuSolver::backtrack(int p)
             m[i][j] = k;
             if(est_valide(i, j))
             {
-                if(backtrack(p+1))
+                if(backtrack(p + 1))
                 {
                     return true;
                 }
@@ -71,7 +71,7 @@ bool AdvancedSudokuSolver::backtrack(int p)
         m[i][j] = 0;
         return false;
     }
-    return backtrack(p+1);
+    return backtrack(p + 1);
 }
 
 bool AdvancedSudokuSolver::est_valide(int &x, int &y)

@@ -33,7 +33,8 @@
 using namespace std;
 
 
-void testWithSolver(SudokuSolver *solver, string grille){
+void testWithSolver(SudokuSolver *solver, string grille)
+{
 
     if(!solver->litGrille(grille))
     {
