@@ -65,13 +65,18 @@ int main(int argc, char *argv[])
 
     cout << "Fichier grille: " << grille << endl;
 
+    UberSudokuSolver usolver;
+    cout << endl << "Test avec UberSudokuSolver"
+         << endl << "==========================" << endl << endl;
+    testWithSolver(&usolver, grille);
+
     AdvancedSudokuSolver asolver;
     cout << endl << "Test avec AdvancedSudokuSolver"
          << endl << "==============================" << endl << endl;
     testWithSolver(&asolver, grille);
 
-    UberSudokuSolver usolver;
-    cout << endl << "Test avec UberSudokuSolver"
-         << endl << "==========================" << endl << endl;
-    testWithSolver(&usolver, grille);
+    BasicSudokuSolver bsolver;
+    cout << endl << "Test avec BasicSudokuSolver"
+         << endl << "==============================" << endl << endl;
+    testWithSolver(&bsolver, grille);
 }
