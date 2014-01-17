@@ -40,7 +40,7 @@ AdvancedSudokuSolver::~AdvancedSudokuSolver()
 bool AdvancedSudokuSolver::solve()
 {
     tries = 0;
-    return backtrack(0, 0);
+    return backtrack(0);
 }
 
 int AdvancedSudokuSolver::getTries()
@@ -48,10 +48,13 @@ int AdvancedSudokuSolver::getTries()
     return tries;
 }
 
-bool AdvancedSudokuSolver::backtrack(int i, int j)
+bool AdvancedSudokuSolver::backtrack(int p)
 {
-    if(j > 8)
+    if(p >= 81)
         return true;
+
+    int i = p / 9;
+    int j = p % 9;
     if(m[i][j] == 0)
     {
         for(int k = 1; k < 10; ++k)
@@ -59,14 +62,7 @@ bool AdvancedSudokuSolver::backtrack(int i, int j)
             m[i][j] = k;
             if(est_valide(i, j))
             {
-                int next_i = i + 1;
-                int next_j = j;
-                if(next_i > 8)
-                {
-                    next_i = 0;
-                    next_j++;
-                }
-                if(backtrack(next_i, next_j))
+                if(backtrack(p+1))
                 {
                     return true;
                 }
@@ -75,16 +71,7 @@ bool AdvancedSudokuSolver::backtrack(int i, int j)
         m[i][j] = 0;
         return false;
     }
-    else
-    {
-        i++;
-        if(i > 8)
-        {
-            i = 0;
-            j++;
-        }
-        return backtrack(i, j);
-    }
+    return backtrack(p+1);
 }
 
 bool AdvancedSudokuSolver::est_valide(int &x, int &y)
@@ -98,13 +85,13 @@ bool AdvancedSudokuSolver::est_valide(int &x, int &y)
                 continue;
             if(m[x][i] + m[x][j] == 0 || m[i][y] + m[j][y] == 0)
                 continue;
-            if(m[i][y] == m[j][y])  // si mm colonne
+            if(m[i][y] == m[j][y]) // si mm colonne
             {
                 /*cout << "COL FAIL" << endl;
                 cout << "m[" << i << "][" << y << "] == m[" << j << "]["<< y <<"] : " << m[i][y] << " == " << m[j][y] << endl;*/
                 return false;
             }
-            if(m[x][i] == m[x][j])
+            if(m[x][i] == m[x][j]) // si mm ligne
             {
                 /* cout << "LIGNE FAIL" << endl;
                  cout << "m[" << x << "][" << i << "] == m[" << x << "]["<< j <<"] : " << m[x][i] << " == " << m[x][j] << endl;*/
