@@ -80,11 +80,9 @@ bool AdvancedSudokuSolver::valeur_valide(int &v, int &x, int &y)
             return false;
     }
 
-    int gx = x / 3;
-    int gy = y / 3;
 
-    int gxv = gx * 3;
-    int gyv = gy * 3;
+    int gxv = (x / 3) * 3;
+    int gyv = (y / 3) * 3;
 
     // test si mm groupe
     for(int i = gxv; i < gxv + 3; ++i)

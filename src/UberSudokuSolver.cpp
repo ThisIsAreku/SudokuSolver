@@ -111,10 +111,8 @@ void UberSudokuSolver::fill_contraintes()
                     contraintes[x][k][v] = false;
                     contraintes[k][y][v] = false;
                 }
-                int gx = x / 3;
-                int gy = y / 3;
-                int gxv = gx * 3;
-                int gyv = gy * 3;
+                int gxv = (x / 3) * 3;
+                int gyv = (y / 3) * 3;
                 for (int gxp = gxv; gxp < gxv + 3; ++gxp)
                 {
                     for (int gyp = gyv; gyp < gyv + 3; ++gyp)
@@ -156,10 +154,8 @@ void UberSudokuSolver::update_contraintes(int &x, int &y)
         contraintes[x][k][v] = false;
         contraintes[k][y][v] = false;
     }
-    int gx = x / 3;
-    int gy = y / 3;
-    int gxv = gx * 3;
-    int gyv = gy * 3;
+    int gxv = (x / 3) * 3;
+    int gyv = (y / 3) * 3;
     for (int gxp = gxv; gxp < gxv + 3; ++gxp)
     {
         for (int gyp = gyv; gyp < gyv + 3; ++gyp)
