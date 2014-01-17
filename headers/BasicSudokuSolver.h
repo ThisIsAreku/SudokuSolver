@@ -30,7 +30,7 @@ class BasicSudokuSolver : public SudokuSolver
 {
 private:
     long tries;
-    bool backtrack();
+    bool backtrack(int);
 public:
     BasicSudokuSolver();
     ~BasicSudokuSolver();

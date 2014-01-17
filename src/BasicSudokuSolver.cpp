@@ -22,8 +22,6 @@
 */
 
 #include <iostream>
-#include <cstdlib>
-#include <ctime>
 
 #include "SudokuSolver.h"
 #include "BasicSudokuSolver.h"
@@ -33,7 +31,6 @@ using namespace std;
 
 BasicSudokuSolver::BasicSudokuSolver()
 {
-    srand(time(NULL));
 }
 BasicSudokuSolver::~BasicSudokuSolver()
 {
@@ -42,42 +39,30 @@ BasicSudokuSolver::~BasicSudokuSolver()
 bool BasicSudokuSolver::solve()
 {
     tries = 0;
-    cout << "Cette implémentation ne peut pas fonctionner" << endl;
-    cout << "Tester toutes les solution \"à l'aveugle\" n'est pas possible" << endl;
-    return false;
-    //return backtrack();
+    return backtrack(0);
 }
 
 int BasicSudokuSolver::getTries()
 {
     return tries;
 }
-bool BasicSudokuSolver::backtrack()
+bool BasicSudokuSolver::backtrack(int p)
 {
-    int **m_cpy;
-    m_cpy = new int*[9];
-    for(int i = 0; i < 9; ++i)
-        m_cpy[i] = new int[9];
+    if(p >= 81)
+        return SudokuSolver::checkSolution();
 
-    do
+    int i = p / 9;
+    int j = p % 9;
+    if(m[i][j] != 0)
+        return backtrack(p + 1);
+
+    for(int k = 1; k < 10; ++k)
     {
+        m[i][j] = k;
         tries++;
-        SudokuSolver::cloneTo(m, m_cpy);
-        for(int i = 0; i < 81; i++)
-        {
-            if(m_cpy[i / 9][i % 9] == 0)
-            {
-                m_cpy[i / 9][i % 9] = (rand() % 9) + 1;
-            }
-        }
+        if(backtrack(p + 1))
+            return true;
     }
-    while(!SudokuSolver::checkSolution(m_cpy));
-
-    SudokuSolver::cloneTo(m_cpy, m);
-    for(int i = 0; i < 9; ++i)
-    {
-        delete [] m_cpy[i];
-    }
-    delete [] m_cpy;
-    return true;
+    m[i][j] = 0;
+    return false;
 }
