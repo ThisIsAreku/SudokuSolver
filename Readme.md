@@ -1,5 +1,6 @@
 # SudokuSolver
 ## Solveur de sudoku optimisé en C++
+[![Build Status](https://travis-ci.org/ThisIsAreku/SudokuSolver.png?branch=master)](https://travis-ci.org/ThisIsAreku/SudokuSolver)
 
 Voici trois implémentations du Solver de sudoku:
 
