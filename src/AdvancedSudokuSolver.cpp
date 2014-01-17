@@ -60,14 +60,14 @@ bool AdvancedSudokuSolver::backtrack(int p)
 
     for(int k = 1; k < 10; ++k)
     {
-        if(valeur_valide(k, i, j))
+        if(valeur_valide(k, i, j)) // si la valeur candidate est possible
         {
-            m[i][j] = k;
-            if(backtrack(p + 1))
+            m[i][j] = k; // on l'insert dans le tableau
+            if(backtrack(p + 1)) // puis, on récurse
                 return true;
         }
     }
-    m[i][j] = 0;
+    m[i][j] = 0; // on réinitialise la valeur si aucune solution n'est trouvée.
     return false;
 }
 

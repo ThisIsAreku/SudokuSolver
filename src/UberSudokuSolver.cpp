@@ -32,7 +32,7 @@ using namespace std;
 
 UberSudokuSolver::UberSudokuSolver()
 {
-
+    // tableau 9*9*9 des contraintes
     contraintes = new bool **[9];
     for(int i = 0; i < 9; ++i)
     {
@@ -63,14 +63,14 @@ UberSudokuSolver::~UberSudokuSolver()
 bool UberSudokuSolver::solve()
 {
     tries = 0;
-    fill_contraintes();
-    fastplace();
+    fill_contraintes(); // initialise contraintes[][][];
+    fastplace(); // trouve toutes les simplifications
 
     //cout << endl << "Fin du fastplace (" << tries << " placés, " << empty << " restants)" << endl << endl;
 
     //SudokuSolver::affiche();
 
-    if(empty == 0)
+    if(empty == 0) // si il ne reste pas de cases vides
     {
         //cout << "Grille complété par fastplace (" << tries << ")" << endl;
         return SudokuSolver::checkSolution(); // vérification de la solution
@@ -78,16 +78,16 @@ bool UberSudokuSolver::solve()
 
     //cout << "Maintenant, Backtracking !" << endl;
 
-    AdvancedSudokuSolver backtracking;
-    backtracking.importGrille(m);
+    AdvancedSudokuSolver backtracking; // sinon, on instancie un object AdvancedSudokuSolver
+    backtracking.importGrille(m); // on importe la grille pré remplie
 
-    bool solved = backtracking.solve();
+    bool solved = backtracking.solve(); // on résout avec le backtracking
 
-    tries += backtracking.getTries();
+    tries += backtracking.getTries(); // on compte le nombre de tests supplémentaires
 
-    SudokuSolver::cloneTo(backtracking.getGrille(), m);
+    SudokuSolver::cloneTo(backtracking.getGrille(), m); // on actualise la grille de notre instance
 
-    return solved;
+    return solved; // normalement, c'est résolu !
 }
 
 int UberSudokuSolver::getTries()
@@ -95,6 +95,7 @@ int UberSudokuSolver::getTries()
     return tries;
 }
 
+/* Remplis le tableau des contraintes avec les données */
 void UberSudokuSolver::fill_contraintes()
 {
     empty = 0;
@@ -126,24 +127,8 @@ void UberSudokuSolver::fill_contraintes()
             }
         }
     }
-    /*
-        for (int k = 0; k < 9; ++k)
-        {
-            cout << "======= " << k+1 << " =======" << endl;
-            for(int i = 0; i < 9; ++i)
-            {
-                if(i % 3 == 0 && i != 0)
-                    cout << endl;
-                for(int j = 0; j < 9; ++j)
-                {
-                    if(j % 3 == 0 && j != 0)
-                        cout << '\t';
-                    cout << contraintes[i][j][k] << ' ';
-                }
-                cout << endl;
-            }
-        }*/
 }
+/* met a jour les contraintes modifiés sans re-parcourir tout le tableau */
 void UberSudokuSolver::update_contraintes(int &x, int &y)
 {
     empty--;
@@ -164,6 +149,7 @@ void UberSudokuSolver::update_contraintes(int &x, int &y)
     }
 }
 
+/* méthode pour trouver les chiffres grâces aux contraintes */
 void UberSudokuSolver::fastplace()
 {
     bool one_edit;
@@ -216,6 +202,7 @@ bool UberSudokuSolver::findRuleA(int &i)
     return false;
 }
 
+/* reversed = true pour faire les lignes à la place des colonnes */
 bool UberSudokuSolver::findRuleB(int &i, bool reversed)
 {
     int indexes[9], counters[9];
@@ -261,6 +248,7 @@ bool UberSudokuSolver::findRuleB(int &i, bool reversed)
     return false;
 }
 
+/* Lent, et ne marche pas. Fausse les sudoku simples, rallonge les sudoku moyens */
 bool UberSudokuSolver::findRuleBGroup()
 {
     int indexes_i[9], indexes_j[9], counters[9];
